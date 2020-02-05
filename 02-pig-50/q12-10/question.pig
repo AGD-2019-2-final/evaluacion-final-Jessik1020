@@ -33,3 +33,16 @@ u = LOAD 'data.csv' USING PigStorage(',')
 --
 -- >>> Escriba su respuesta a partir de este punto <<<
 --
+lines = LOAD '*.csv' USING PigStorage(',') AS 
+(id:INT,
+nombre:CHARARRAY,
+apellido:CHARARRAY,
+fecha:CHARARRAY,
+color:CHARARRAY,
+valor:INT);
+
+y= FOREACH lines GENERATE apellido, SUBSTRING($2,0,1) as inicial;
+u= FILTER y BY inicial >= 'D' and inicial <= 'K';
+
+z = FOREACH u GENERATE apellido;
+STORE z INTO 'output' USING PigStorage(',');

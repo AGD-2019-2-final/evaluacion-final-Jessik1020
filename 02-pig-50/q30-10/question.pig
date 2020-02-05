@@ -41,3 +41,43 @@ u = LOAD 'data.csv' USING PigStorage(',')
 -- >>> Escriba su respuesta a partir de este punto <<<
 --
 
+lines = LOAD '*.csv' USING PigStorage(',') AS 
+(id:INT,
+nombre:CHARARRAY,
+apellido:CHARARRAY,
+fecha:CHARARRAY,
+color:CHARARRAY,
+valor:INT);
+
+u = FOREACH lines GENERATE fecha  , ToDate(fecha,'yyyy-MM-dd') AS formato;
+y = FOREACH u GENERATE fecha,
+				SUBSTRING($0,8,10) AS dddd,
+				GetDay(formato) as dd,
+				ToString(ToDate(fecha,'yyyy-MM-dd'), 'EEE') AS yy,
+				ToString(ToDate(fecha,'yyyy-MM-dd'), 'EEEE') AS yyyy
+				;
+
+z = FOREACH y GENERATE fecha,
+                    dddd,
+                    dd,
+				case yy
+					when 'Mon' then 'lun'
+					when 'Tue' then 'mar'
+					when 'Wed' then 'mie'
+					when 'Thu' then 'jue'
+					when 'Fri' then 'vie'
+					when 'Sat' then 'sab'
+					when 'Sun' then 'dom'
+					end as diacorto
+
+				, case yy
+					when 'Mon' then 'lunes'
+					when 'Tue' then 'martes'
+					when 'Wed' then 'miercoles'
+					when 'Thu' then 'jueves'
+					when 'Fri' then 'viernes'
+					when 'Sat' then 'sabado'
+					when 'Sun' then 'domingo'
+					end as nombre_dia;
+
+STORE z INTO 'output' USING PigStorage(',');

@@ -40,3 +40,32 @@ u = LOAD 'data.csv' USING PigStorage(',')
 --
 -- >>> Escriba su respuesta a partir de este punto <<<
 --
+lines = LOAD '*.csv' USING PigStorage(',') AS 
+(id:INT,
+nombre:CHARARRAY,
+apellido:CHARARRAY,
+fecha:CHARARRAY,
+color:CHARARRAY,
+valor:INT);
+
+u = FOREACH lines GENERATE fecha, SUBSTRING(fecha,5,7) as mes,(int) SUBSTRING(fecha,5,7) as mm;
+
+y = foreach u generate fecha,
+				case mes
+				when '01'  then 'ene'
+				when '02'  then 'feb'
+				when '03'  then 'mar'
+				when '04'  then 'abr'
+				when '05'  then 'may'
+				when '06'  then 'jun'
+				when '07'  then 'jul'
+				when '08'  then 'ago'
+				when '09'  then 'sep'
+				when '10'  then 'oct'
+				when '11'  then 'nov'
+				when '12'  then 'dic'
+				end as name,
+				mes,
+				mm;
+
+STORE y INTO 'output' USING PigStorage(',');

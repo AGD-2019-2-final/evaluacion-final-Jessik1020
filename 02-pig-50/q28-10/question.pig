@@ -29,4 +29,17 @@ u = LOAD 'data.csv' USING PigStorage(',')
 --
 -- >>> Escriba su respuesta a partir de este punto <<<
 --
+lines = LOAD '*.csv' USING PigStorage(',') AS 
+(id:INT,
+nombre:CHARARRAY,
+apellido:CHARARRAY,
+fecha:CHARARRAY,
+color:CHARARRAY,
+valor:INT);
+
+u = FOREACH lines GENERATE fecha,SUBSTRING(fecha,0,4) AS f4, SUBSTRING(fecha,2,4) AS f2;
+y = FOREACH u GENERATE f4,f2;
+
+STORE y INTO 'output' USING PigStorage(',');
+
 

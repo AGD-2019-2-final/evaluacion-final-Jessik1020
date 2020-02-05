@@ -39,4 +39,13 @@ LOAD DATA LOCAL INPATH 'tbl1.csv' INTO TABLE tbl1;
 --
 -- >>> Escriba su respuesta a partir de este punto <<<
 --
+DROP TABLE IF EXISTS data;
+CREATE TABLE data AS 
+SELECT YEAR(c4) AS anio, c0 FROM tbl0
+LATERAL VIEW explode(c5) c4 AS c0;
 
+INSERT OVERWRITE LOCAL DIRECTORY 'output' ROW FORMAT DELIMITED FIELDS TERMINATED BY ','
+(SELECT anio, c0, COUNT(c0)
+FROM data
+GROUP BY anio, c0
+ORDER BY anio, c0);

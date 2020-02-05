@@ -12,3 +12,11 @@ fs -rm -f -r output;
 --
 -- >>> Escriba su respuesta a partir de este punto <<<
 --
+lines = LOAD '*.tsv' USING PigStorage('\t') AS 
+(letra:CHARARRAY,
+letras:bag{(a:CHARARRAY)},
+letrass:MAP[]);
+
+u = FOREACH lines GENERATE $0, COUNT_STAR($1) as f1:CHARARRAY, SIZE($2) as f2:CHARARRAY;
+y = ORDER u BY $0,$1,$2;
+STORE y INTO 'output' USING PigStorage(',');

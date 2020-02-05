@@ -20,3 +20,15 @@ u = LOAD 'data.csv' USING PigStorage(',')
 --
 -- >>> Escriba su respuesta a partir de este punto <<<
 --
+lines = LOAD '*.csv' USING PigStorage(',') AS 
+(id:INT,
+nombre:CHARARRAY,
+apellido:CHARARRAY,
+fecha:CHARARRAY,
+color:CHARARRAY,
+valor:INT);
+
+u = FOREACH lines GENERATE SUBSTRING(fecha,0,4) as year;
+grouped = group u by year;
+y = FOREACH grouped GENERATE group,   COUNT(u);
+STORE y INTO 'output' USING PigStorage(',');

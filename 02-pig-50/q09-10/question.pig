@@ -28,4 +28,13 @@
 fs -rm -f -r output;
 --
 
+lines = LOAD '*.csv' USING PigStorage(',') AS 
+(id:INT,
+nombre:CHARARRAY,
+apellido:CHARARRAY,
+fecha:CHARARRAY,
+color:CHARARRAY,
+valor:INT);
 
+y = foreach lines GENERATE CONCAT($1, '@',$2);
+STORE y INTO 'output' USING PigStorage('\t');

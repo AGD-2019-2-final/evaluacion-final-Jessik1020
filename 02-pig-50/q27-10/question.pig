@@ -26,3 +26,15 @@ u = LOAD 'data.csv' USING PigStorage(',')
 --
 -- >>> Escriba su respuesta a partir de este punto <<<
 --
+lines = LOAD '*.csv' USING PigStorage(',') AS 
+(id:INT,
+nombre:CHARARRAY,
+apellido:CHARARRAY,
+fecha:CHARARRAY,
+color:CHARARRAY,
+valor:INT);
+
+u = FOREACH lines GENERATE nombre, INDEXOF(nombre,'ia',0) as f1;
+y = FOREACH u GENERATE f1;
+
+STORE y INTO 'output' USING PigStorage(' ');
